@@ -44,7 +44,11 @@ open class TerminalView: UIScrollView, UITextInputTraits, UIKeyInput, UIScrollVi
         let boldItalic: UIFont
         
         static var defaultFont: UIFont {
-            UIFont.monospacedSystemFont (ofSize: 12, weight: .regular)
+            if #available(iOS 13, *) {
+                return UIFont.monospacedSystemFont (ofSize: 12, weight: .regular)
+            } else {
+                return UIFont (name: "Menlo", size: 12)!
+            }
         }
         
         public init(font baseFont: UIFont) {
@@ -255,8 +259,12 @@ open class TerminalView: UIScrollView, UITextInputTraits, UIKeyInput, UIScrollVi
 
         // Set the location of the menu in the view.
         let menuLocation = CGRect (origin: at, size: CGSize.zero)
-        //menuController.setTargetRect(menuLocation, in: gestureRecognizer.view!)
-        menuController.showMenu(from: self, rect: menuLocation)
+        if #available(iOS 13, *) {
+            menuController.showMenu(from: self, rect: menuLocation)
+        } else {
+            menuController.setTargetRect(menuLocation, in: self)
+            menuController.setMenuVisible(true, animated: true)
+        }
     }
     
     var lastLongSelect: Position?
@@ -317,7 +325,11 @@ open class TerminalView: UIScrollView, UITextInputTraits, UIKeyInput, UIScrollVi
             }
             
             if UIMenuController.shared.isMenuVisible {
-                UIMenuController.shared.hideMenu()
+                if #available(iOS 13, *) {
+                    UIMenuController.shared.hideMenu()
+                } else {
+                    UIMenuController.shared.setMenuVisible(false, animated: true)
+                }
             }
          
             if allowMouseReporting && terminal.mouseMode.sendButtonPress() {
@@ -418,7 +430,7 @@ open class TerminalView: UIScrollView, UITextInputTraits, UIKeyInput, UIScrollVi
         guard let name = imgName else { return }
 
         if lastCursorImage == name { return }
-        guard let img = UIImage(systemName: name) else { return }
+        guard #available(iOS 13, *), let img = UIImage(systemName: name) else { return }
         lastCursorImage = name
         if let child = host.subviews.first {
             child.removeFromSuperview()
@@ -1076,7 +1088,7 @@ open class TerminalView: UIScrollView, UITextInputTraits, UIKeyInput, UIScrollVi
         func getColor (_ r: CGFloat, _ g: CGFloat, _ b: CGFloat) -> UIColor {
             return UIColor (red: r/255.0, green: g/255.0, blue: b/255.0, alpha: 1.0)
         }
-        if traitCollection.userInterfaceStyle == .dark {
+        if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
             buttonBackgroundColor = UIColor (red: 150/255.0, green: 150/255.0, blue: 150/255.0, alpha: 1)
             buttonShadowColor = UIColor (red: 26/255.0, green: 26/255.0, blue: 26/255.0, alpha: 1)
             buttonColor = .white
@@ -1106,7 +1118,11 @@ extension TerminalView: TerminalDelegate {
             self.setNeedsDisplay (self.bounds)
             
             if !self.selection.active {
-                UIMenuController.shared.hideMenu()
+                if #available(iOS 13, *) {
+                    UIMenuController.shared.hideMenu()
+                } else {
+                    UIMenuController.shared.setMenuVisible(false, animated: true)
+                }
             }
         }
     }

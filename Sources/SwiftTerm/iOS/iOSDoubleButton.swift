@@ -83,7 +83,11 @@ class DoubleButton: UIControl {
         setColors ()
         layer.cornerRadius = 4
         
-        layer.shadowColor = UIColor.secondaryLabel.cgColor
+        if #available(iOS 13, *) {
+            layer.shadowColor = UIColor.secondaryLabel.cgColor
+        } else {
+            layer.shadowColor = UIColor (red: 60/255.0, green: 60/255.0, blue: 67/255.0, alpha: 0.6).cgColor
+        }
         layer.shadowOffset = CGSize (width: 0, height: 0)
         layer.shadowRadius = 0
         layer.shadowOpacity = 1
@@ -96,7 +100,7 @@ class DoubleButton: UIControl {
         func getColor (_ r: CGFloat, _ g: CGFloat, _ b: CGFloat) -> UIColor {
             return UIColor (red: r/255.0, green: g/255.0, blue: b/255.0, alpha: 1.0)
         }
-        if traitCollection.userInterfaceStyle == .dark {
+        if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
             backgroundColor = UIColor (red: 150/255.0, green: 150/255.0, blue: 150/255.0, alpha: 1)
             buttonShadowColor = UIColor (red: 26/255.0, green: 26/255.0, blue: 26/255.0, alpha: 1)
         } else {
@@ -169,7 +173,11 @@ class DoubleButton: UIControl {
             primaryView.alpha = 1-(deltaY/maxDeltaY)
             if deltaY > activatePoint {
                 primaryView.alpha = 0
-                secondaryView.textColor = UIColor.label
+                if #available(iOS 13, *) {
+                    secondaryView.textColor = UIColor.label
+                } else {
+                    secondaryView.textColor = UIColor.black
+                }
             }
             break
         @unknown default:

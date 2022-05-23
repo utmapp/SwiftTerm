@@ -79,7 +79,7 @@ class KeyboardView: UIView {
             TerminalAccessory.styleButton(b)
             b.addTarget(self, action: sel, for: .touchDown)
             b.frame = rect
-            if let icon = img {
+            if #available(iOS 13, *), let icon = img {
                 if let img = UIImage (systemName: icon, withConfiguration: UIImage.SymbolConfiguration (pointSize: 14.0)) {
                     b.setImage(img.withTintColor(terminalView.buttonColor, renderingMode: .alwaysOriginal), for: .normal)
                 }

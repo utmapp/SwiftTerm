@@ -311,7 +311,7 @@ return
             b.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         }
         b.backgroundColor = isNormal ? terminalView.buttonBackgroundColor : terminalView.buttonDarkBackgroundColor
-        if icon != "" {
+        if #available(iOS 13, *), icon != "" {
             if let img = UIImage (systemName: icon, withConfiguration: UIImage.SymbolConfiguration (pointSize: 14.0)) {
                 b.setImage(img.withTintColor(terminalView.buttonColor, renderingMode: .alwaysOriginal), for: .normal)
             }
