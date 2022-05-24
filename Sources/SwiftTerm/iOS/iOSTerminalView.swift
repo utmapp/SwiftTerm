@@ -36,7 +36,7 @@ internal var log: Logger = Logger(subsystem: "org.tirania.SwiftTerm", category: 
  * Use the `configureNativeColors()` to set the defaults colors for the view to match the OS
  * defaults, otherwise, this uses its own set of defaults colors.
  */
-open class TerminalView: UIScrollView, UITextInputTraits, UIKeyInput, UIScrollViewDelegate {
+open class TerminalView: UIScrollView, UITextInputTraits, UIKeyInput, UIScrollViewDelegate, UIGestureRecognizerDelegate {
     struct FontSet {
         public let normal: UIFont
         let bold: UIFont
@@ -535,20 +535,28 @@ open class TerminalView: UIScrollView, UITextInputTraits, UIKeyInput, UIScrollVi
         }
     }
     
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        return touch.view == gestureRecognizer.view
+    }
+    
     func setupGestures ()
     {
         let longPress = UILongPressGestureRecognizer (target: self, action: #selector(longPress(_:)))
+        longPress.delegate = self
         longPress.minimumPressDuration = 0.7
         addGestureRecognizer(longPress)
         
         let singleTap = UITapGestureRecognizer (target: self, action: #selector(singleTap(_:)))
+        singleTap.delegate = self
         addGestureRecognizer(singleTap)
         
         let doubleTap = UITapGestureRecognizer (target: self, action: #selector(doubleTap(_:)))
+        doubleTap.delegate = self
         doubleTap.numberOfTapsRequired = 2
         addGestureRecognizer(doubleTap)
 
         let pan = UIPanGestureRecognizer (target: self, action: #selector(pan(_:)))
+        pan.delegate = self
         addGestureRecognizer(pan)
     }
 
